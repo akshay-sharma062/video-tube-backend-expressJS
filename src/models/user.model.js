@@ -1,5 +1,5 @@
 import mongoose,{ Schema } from "mongoose";
-import { jwt } from "jsonwebtoken";
+import  jwt  from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
 
@@ -26,7 +26,7 @@ const userSchema = new  Schema({
         trim : true,
         index : true,
     },
-    avtar:{
+    avatar:{
         type : String, //cloudinary url
         required : true,
     },
@@ -44,32 +44,36 @@ const userSchema = new  Schema({
     },
     refreshToken:{
         type : String,
-        required : true,
     },
 
 },{
     timestamps:true
 })
 
-userSchema.pre('save',async (next)=>{
-    if(!this.ismodifyed(password)) return next();
+userSchema.pre('save',async function (next){
+    if(!this.isModified('password')) return next();
         this.password = await bcrypt.hash(this.password,10)
         next()
 })
-userSchema.method.isPasswordCorrect = async (password) => {
+userSchema.methods.isPasswordCorrect = async (password) => {
    return await bcrypt.compare(password,this.password)
 }
-userSchema.method,genrateAccessToken = async () =>{
-    jwt.sign({
+userSchema.method.genrateAccessToken = async () =>{
+    return jwt.sign({
         _id : this.id,
-    },process.env.REFRESH_TOKEN_SECRET,
+    },process.env.ACCESS_TOKEN_SECRET,
     {
-        expiresIn:process.env.REFRESH_TOKEN_EXPIRY
+        expiresIn:process.env.ACCESS_TOKEN_EXPIRY
     }
 )
 }
 userSchema.method.genrateRefreshToken = async () =>{
-
+   return jwt.sign({
+        _id : this.id,
+    },process.env.REFRESH_TOKEN_SECRET,
+    {
+        expiresIn:process.env.REFRESH_TOKEN_EXPIRY
+    })
 }
 
 export const User = mongoose.model('User',userSchema)

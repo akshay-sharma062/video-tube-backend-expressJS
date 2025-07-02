@@ -25,6 +25,7 @@ try{
 //file has been uploaded success
 console.log('file has been uploaded on cloudinary',response.url)
 fs.unlinkSync(localFilePath)
+// console.log('cloudinary Response-------',response)
 return response
 }
 catch(error) {

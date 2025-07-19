@@ -147,6 +147,8 @@ const registerUser = asyncHandler(async (req, res) => {
 
     })
     
+
+    
     // Logout User
     const logoutUser = asyncHandler(async (req,res) => {
       //remove refresh token from db
